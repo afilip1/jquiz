@@ -42,7 +42,7 @@ class KanjiQuizDictionary : public Dictionary {
 
 Dictionary load_words(std::string tag) {
     sqlite3* db;
-    auto exit = sqlite3_open("data.db", &db);
+    auto exit = sqlite3_open("./data.db", &db);
 
     if (exit) {
         std::cerr << "Error opening DB: " << sqlite3_errmsg(db) << "\n";
