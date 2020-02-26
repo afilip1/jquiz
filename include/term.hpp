@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace term {
+namespace jquiz::term {
 
 enum class Color {
     Red,
@@ -30,4 +30,4 @@ std::string green(std::string message) {
     return with_color(Color::Green, message);
 }
 
-}  // namespace term
+}  // namespace jquiz::term

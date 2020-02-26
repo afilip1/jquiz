@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 20)
 add_executable(jquiz src/main.cpp src/db.cpp)
 add_executable(dbtool src/dbtool.cpp)
 
-include_directories(./include)
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
 find_package(SQLite3 REQUIRED)
 

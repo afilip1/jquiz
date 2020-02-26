@@ -14,7 +14,7 @@ struct Word {
     bsc::String meanings;
 };
 
-bsc::Vec<Word> load_words(std::string file) {
+bsc::Vec<Word> load_words(const std::string file) {
     std::ifstream words_file(file);
     bsc::Map<std::string, Word> words_map{};
     bsc::Vec<Word> no_kanji{};
@@ -52,7 +52,7 @@ bsc::Vec<Word> load_words(std::string file) {
     return words;
 }
 
-int main() {
+int main(int argc, char** argv) {
     sqlite3* db;
     auto exit = sqlite3_open("data.db", &db);
 
@@ -69,7 +69,7 @@ int main() {
         "readings   TEXT    NOT NULL,"
         "meanings   TEXT    NOT NULL,"
         "tags       TEXT    NOT NULL,"
-        "PRIMARY KEY (readings, meanings));";
+        "PRIMARY KEY (kanji, readings, meanings));";
 
     char* errmsg = nullptr;
     sqlite3_exec(db, create, nullptr, nullptr, &errmsg);
@@ -80,19 +80,42 @@ int main() {
     }
     std::cout << "create OK\n";
 
-    auto words = load_words("n5.txt");
+    sqlite3_exec(db, "BEGIN;", nullptr, nullptr, &errmsg);
+
+    if (errmsg) {
+        std::cout << errmsg << "\n";
+        return -1;
+    }
+    std::cout << "begin OK\n";
+
+    auto tag = argv[2];
+    std::cout << "tag: " << tag << "\n";
+    auto words = load_words(argv[1]);
     for (auto w : words) {
         auto sql =
             "INSERT INTO words(kanji, readings, meanings, tags) "
             "VALUES (\"" +
             w.kanji + "\", \"" + w.readings.iter().join<bsc::String>(',') +
-            "\", \"" + w.meanings + "\", \"n5\");";
+            "\", \"" + w.meanings + "\", \"" + tag + "\");";
 
         sqlite3_exec(db, sql.c_str(), nullptr, nullptr, &errmsg);
         if (errmsg) {
-            std::cout << errmsg << "\n";
+            std::cout << errmsg << "\n"
+                      << w.kanji << " "
+                      << w.readings.iter().join<bsc::String>(',') << " "
+                      << w.meanings << "\n";
+            sqlite3_exec(db, "ROLLBACK;", nullptr, nullptr, &errmsg);
             return -1;
         }
     }
+
+    sqlite3_exec(db, "COMMIT;", nullptr, nullptr, &errmsg);
+
+    if (errmsg) {
+        std::cout << errmsg << "\n";
+        return -1;
+    }
+    std::cout << "commit OK\n";
+
     std::cout << "insert OK\n";
 }
