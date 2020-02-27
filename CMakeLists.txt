@@ -4,7 +4,7 @@ project(jquiz)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(jquiz src/main.cpp src/db.cpp)
+add_executable(jquiz src/main.cpp src/db.cpp src/quiz.cpp src/term.cpp)
 add_executable(dbtool src/dbtool.cpp)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)

@@ -19,6 +19,8 @@ class DBConnection {
 
 class DB {
    public:
+    static bsc::Vec<bsc::String> get_tags();
+    static words::WordList get_words_with_kanji_by_tag(std::string tag);
     static words::WordList get_words_by_tag(std::string tag);
 
    private:

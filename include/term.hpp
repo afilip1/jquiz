@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 
 namespace jquiz::term {
@@ -9,25 +10,20 @@ enum class Color {
     Green,
 };
 
-std::string color_to_string(Color color) {
-    switch (color) {
-        case Color::Red:
-            return "\e[0;31m";
-        case Color::Green:
-            return "\e[0;32m";
-    }
+std::string color_to_string(Color color);
+std::string with_color(Color color, std::string message);
+std::string red(std::string message);
+std::string green(std::string message);
 
-    return "\e[m";
-}
+template <class T>
+T prompt(std::string message) {
+    auto prompt = "|>";
+    std::cout << message << "\n" << prompt;
 
-std::string with_color(Color color, std::string message) {
-    return color_to_string(color) + message + "\e[m";
-}
+    T input;
+    std::cin >> input;
 
-std::string red(std::string message) { return with_color(Color::Red, message); }
-
-std::string green(std::string message) {
-    return with_color(Color::Green, message);
+    return input;
 }
 
 }  // namespace jquiz::term
